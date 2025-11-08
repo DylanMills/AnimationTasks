@@ -2,34 +2,13 @@ using DitzelGames.FastIK;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
-public class ThirdPersonController : MonoBehaviour
+public class Guard : MonoBehaviour
 {
-    [Header("IK Settings")]
-    public FastIKFabric rightHandIK;
-
-    public FastIKFabric leftHandIK;
-    public bool handsAttached = false;
-    public int IKBonesCount = 2;
-    public Transform rightHandTarget;
-    public Transform leftHandTarget;
-
-    [Header("Camera Orbit Settings")]
-    public float mouseSensitivity = 2f;
-
-    public float cameraDistance = 4f;
-    public float cameraHeight = 1.5f;
-    public float minPitch = -30f;
-    public float maxPitch = 60f;
-
-    private float yaw = 0f;
-    private float pitch = 10f;
-
-    public bool restricted = false;
+ 
 
     public float walkSpeed = 4f;
     public float crouchSpeed = 2f;
     public float rotationSpeed = 10f;
-    public Transform cameraTransform;
     public Animator animator;
 
     [Header("Attack Settings")]
@@ -84,39 +63,20 @@ public class ThirdPersonController : MonoBehaviour
     private float smoothTurnVelocity;
 
 
-    float horizontalMaster;
-    float verticalMaster;
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
-        if (!cameraTransform)
-            cameraTransform = Camera.main.transform;
 
-        // Initialize yaw and pitch based on current camera
-        Vector3 angles = cameraTransform.eulerAngles;
-        yaw = angles.y;
-        pitch = angles.x;
 
-        // Initialize IK
-
-        rightHandIK.ChainLength = IKBonesCount;
-        rightHandIK.Target = rightHandTarget;
-        leftHandIK.ChainLength = IKBonesCount;
-        leftHandIK.Target = leftHandTarget;
-
-        AttachHands(false);
-        handsAttached = false;
     }
 
     private void Update()
     {
-        HandleCameraOrbit();
-        HandleGroundCheck();
-
-        if (!restricted && !isAttacking)
+        if (!isAttacking)
 
         {
-            HandleInput();
+            
 
             HandleSneakLayer();
             HandleCrouchLayer();
@@ -124,109 +84,16 @@ public class ThirdPersonController : MonoBehaviour
             if (activeWeaponLayerIndex != inactiveWeaponLayerIndex)
             { UnequipWeaponLayer(inactiveWeaponLayerIndex); }
         }
-    
-
-
-        if (isSlowingDown)
-        {
-            slowdownTimer += Time.deltaTime;
-            float t = Mathf.Clamp01(slowdownTimer / slowdownDuration);
-            movementMultiplier = attackSlowdownCurve.Evaluate(t);
-
-            if (slowdownTimer >= slowdownDuration)
-                isSlowingDown = false;
-        }
-        
-        HandleMovement();
+        //HandleMovement();
     }
 
-    public void AttachHands(bool attach)
-    {
-        rightHandIK.enabled = attach;
+    //public void AttachHands(bool attach)
+    //{
+    //    rightHandIK.enabled = attach;
 
-        leftHandIK.enabled = attach;
-    }
+    //    leftHandIK.enabled = attach;
+    //}
 
-    private void HandleGroundCheck()
-    {
-        // Use a simple sphere check at the feet to determine if grounded
-        Vector3 spherePosition = transform.position + Vector3.up * 0.1f;
-        isGrounded = Physics.CheckSphere(spherePosition, groundCheckDistance, groundMask, QueryTriggerInteraction.Ignore);
-
-        if (isGrounded && velocity.y < 0)
-        {
-            velocity.y = -2f; // Small downward force to keep grounded
-        }
-
-        if (animator)
-        {
-            animator.SetBool("IsGrounded", isGrounded);
-        }
-    }
-
-    private void HandleCameraOrbit()
-    {
-        // Mouse input
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
-
-        yaw += mouseX;
-        pitch -= mouseY;
-        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
-
-        // Calculate camera position
-        Vector3 targetPosition = transform.position + Vector3.up * cameraHeight;
-        Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
-        Vector3 offset = rotation * new Vector3(0, 0, -cameraDistance);
-
-        cameraTransform.position = targetPosition + offset;
-        cameraTransform.rotation = rotation;
-    }
-
-    private void HandleInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            TryAttack();
-        }
-        if (Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            ToggleBlock();
-        }
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            handsAttached = !handsAttached;
-            AttachHands(handsAttached);
-        }
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            isCrouching = !isCrouching;
-            animator.SetBool("IsCrouching", isCrouching);
-            isSneaking = isCrouching; // Sync sneaking with crouching
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            if (!isCrouching) // Only toggle sneak if not crouching
-                isSneaking = !isSneaking;
-        }
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded && !isCrouching)
-        {
-            velocity.y = Mathf.Sqrt(2f * jumpHeight * -gravity);
-            if (animator)
-                animator.SetTrigger("Jump");
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            WeaponSwitchInput(1);
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-            WeaponSwitchInput(2);
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-            WeaponSwitchInput(3);
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-            WeaponSwitchInput(4);
-    }
 
     private void TryAttack()
     {
@@ -234,8 +101,8 @@ public class ThirdPersonController : MonoBehaviour
         {
             animator.SetTrigger("Attack");
             isAttacking = true;
-            horizontalMaster = Input.GetAxis("Horizontal");
-            verticalMaster = Input.GetAxis("Vertical");
+            //horizontalMaster = Input.GetAxis("Horizontal");
+            //verticalMaster = Input.GetAxis("Vertical");
             StartAttackSlowdown();
             Invoke(nameof(AttackFinished), attackCooldown);
         }
@@ -263,7 +130,7 @@ public class ThirdPersonController : MonoBehaviour
         }
     }
 
-    private void WeaponSwitchInput(int input)
+    public void WeaponSwitchInput(int input)
     {
         if (inactiveWeaponLayerIndex <= 0)
         {
@@ -313,48 +180,50 @@ public class ThirdPersonController : MonoBehaviour
         float newWeight = Mathf.MoveTowards(currentWeight, targetWeight, Time.deltaTime * 6);
         animator.SetLayerWeight(weaponIndex, newWeight);
     }
-    
+
     private void HandleMovement()
     {
+        return;
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-        if (isAttacking)
-        {
-            horizontal = horizontalMaster;
-            vertical = verticalMaster;
-        }
-        Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
+        //if (isAttacking)
+        //{
+        //    horizontal = horizontalMaster;
+        //    vertical = verticalMaster;
+        //}
+        //Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
 
-        if (direction.magnitude >= 0.1f)
-        {
-            float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
-            float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref smoothTurnVelocity, 0.1f);
-            transform.rotation = Quaternion.Euler(0f, angle, 0f);
+        //if (direction.magnitude >= 0.1f)
+        //{
+            //float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
+            //float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref smoothTurnVelocity, 0.1f);
+        //    transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
-            Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-           
-            float speed = isCrouching||isBlocking ? crouchSpeed : walkSpeed;
-            if (isAttacking)
-            {
-                
-                controller.Move(movementMultiplier * moveDir * speed * Time.deltaTime);
-            }else
-                controller.Move(moveDir * speed * Time.deltaTime);
+        //    Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
 
-            animator.SetFloat("Moving", 1.0f);
-            animator.SetBool("IsMoving", true);
-            animator.SetBool("IsCrouching", isCrouching);
-        }
-        else
-        {
-            animator.SetFloat("Moving", 0.0f);
-            animator.SetBool("IsMoving", false);
-        }
+        //    float speed = isCrouching || isBlocking ? crouchSpeed : walkSpeed;
+        //    if (isAttacking)
+        //    {
+
+        //        controller.Move(movementMultiplier * moveDir * speed * Time.deltaTime);
+        //    }
+        //    else
+        //        controller.Move(moveDir * speed * Time.deltaTime);
+
+        //    animator.SetFloat("Moving", 1.0f);
+        //    animator.SetBool("IsMoving", true);
+        //    animator.SetBool("IsCrouching", isCrouching);
+        //}
+        //else
+        //{
+        //    animator.SetFloat("Moving", 0.0f);
+        //    animator.SetBool("IsMoving", false);
+        //}
 
         // Gravity
-    
-      
-            velocity.y += gravity * Time.deltaTime;
+
+
+        velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
 
