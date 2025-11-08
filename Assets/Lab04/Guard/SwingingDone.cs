@@ -99,7 +99,7 @@ public class SwingingDone : MonoBehaviour
         //GetComponent<Grappling>().StopGrapple();
         //pm.ResetRestrictions();
 
-        pm.swinging = true;
+        pm.restricted = true;
 
         swingPoint = predictionHit.point;
         joint = player.gameObject.AddComponent<SpringJoint>();
@@ -124,7 +124,7 @@ public class SwingingDone : MonoBehaviour
     public void StopSwing()
     {
         Debug.Log("Swing stopped");
-        pm.swinging = false;
+        pm.restricted = false;
 
         lr.positionCount = 0;
 

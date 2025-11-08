@@ -1,9 +1,17 @@
+using DitzelGames.FastIK;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 //[RequireComponent(typeof(Rigidbody))]
 public class ThirdPersonController : MonoBehaviour
 {
+    [Header("IK Settings")]
+    public FastIKFabric rightHandIK;
+    public FastIKFabric leftHandIK;
+    public bool handsAttached=false;
+    public int IKBonesCount = 2;
+    public Transform rightHandTarget;
+    public Transform leftHandTarget;
     [Header("Camera Orbit Settings")]
     public float mouseSensitivity = 2f;
     public float cameraDistance = 4f;
@@ -14,7 +22,7 @@ public class ThirdPersonController : MonoBehaviour
     private float yaw = 0f;
     private float pitch = 10f;
 
-    public bool swinging = false;
+    public bool restricted = false;
 
 
 
@@ -65,31 +73,47 @@ public class ThirdPersonController : MonoBehaviour
         Vector3 angles = cameraTransform.eulerAngles;
         yaw = angles.y;
         pitch = angles.x;
+
+        // Initialize IK
+
+            rightHandIK.ChainLength = IKBonesCount;
+            rightHandIK.Target = rightHandTarget;
+        leftHandIK.ChainLength = IKBonesCount;
+        leftHandIK.Target = leftHandTarget;
+
+        AttachHands(false);
+        handsAttached = false;
+
     }
 
     void Update()
     {
         HandleCameraOrbit();
         HandleGroundCheck();
-        HandleInput();
-        if (!swinging)
+      
+
+        if (!restricted)
+
         {
-     
-            HandleMovement();
-        
+            HandleInput();
+
+
         HandleSneakLayer();
-        HandleCrouchLayer(); // Add this line
-
-        //if (activeWeaponLayerIndex >= 0)
-        //{
-            HandleWeaponLayer(activeWeaponLayerIndex);
+        HandleCrouchLayer();
+        HandleWeaponLayer(activeWeaponLayerIndex);
         if (activeWeaponLayerIndex != inactiveWeaponLayerIndex)
-        {
-
-         UnequipWeaponLayer(inactiveWeaponLayerIndex);
+        {UnequipWeaponLayer(inactiveWeaponLayerIndex);}
+            
         }
-            //}
-        }
+        HandleMovement();
+    }
+    
+    public void AttachHands(bool attach)
+    {
+     
+            rightHandIK.enabled = attach;
+        
+            leftHandIK.enabled = attach;
     }
     void HandleGroundCheck()
     {
@@ -128,8 +152,15 @@ public class ThirdPersonController : MonoBehaviour
         cameraTransform.position = targetPosition + offset;
         cameraTransform.rotation = rotation;
     }
-    void HandleInput()
-    {
+    void HandleInput() { 
+       
+        if(Input.GetKeyDown(KeyCode.E))
+        {
+            handsAttached = !handsAttached;
+            AttachHands(handsAttached);
+        }
+
+
         if (Input.GetKeyDown(KeyCode.C))
         {
             isCrouching = !isCrouching;
@@ -231,7 +262,7 @@ public class ThirdPersonController : MonoBehaviour
         }
 
         // Gravity
-        //velocity.y += gravity * Time.deltaTime;
+        velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
 
