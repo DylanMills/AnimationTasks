@@ -18,11 +18,11 @@ public class ThirdPersonController : MonoBehaviour
 
     public float cameraDistance = 4f;
     public float cameraHeight = 1.5f;
-    public float minPitch = -30f;
+    public float minPitch = 40f;
     public float maxPitch = 60f;
 
     private float yaw = 0f;
-    private float pitch = 10f;
+    private float pitch = 40f;
 
     public bool restricted = false;
 
@@ -37,6 +37,8 @@ public class ThirdPersonController : MonoBehaviour
 
     public bool isAttacking = false;
     public float attackCooldown = 0.2f;
+
+    public Collider weaponCollider;
 
 
     [Header("Attack Slowdown Settings")]
@@ -238,10 +240,21 @@ public class ThirdPersonController : MonoBehaviour
             verticalMaster = Input.GetAxis("Vertical");
             StartAttackSlowdown();
             Invoke(nameof(AttackFinished), attackCooldown);
+            Invoke(nameof(EnableWeaponCollider), 0.05f);
+
         }
     }
-
-
+    private void EnableWeaponCollider()
+    {
+        if (weaponCollider)
+            weaponCollider.enabled = true;
+        Invoke(nameof(DisableWeaponCollider), 0.1f);
+    }
+    private void DisableWeaponCollider()
+    {
+        if (weaponCollider)
+            weaponCollider.enabled = false;
+    }
     private void AttackFinished()
     {
         isAttacking = false;

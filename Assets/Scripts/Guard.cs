@@ -16,7 +16,7 @@ public class Guard : MonoBehaviour
 
     public bool isAttacking = false;
     public float attackCooldown = 0.2f;
-
+    public int health = 3;
 
     [Header("Attack Slowdown Settings")]
     [Tooltip("Curve controlling how quickly the player slows down when attack interrupts movement.")]
@@ -63,6 +63,7 @@ public class Guard : MonoBehaviour
     private float smoothTurnVelocity;
 
 
+    public bool isRestricted = false;
 
     private void Start()
     {
@@ -97,7 +98,7 @@ public class Guard : MonoBehaviour
 
     private void TryAttack()
     {
-        if (animator && !isAttacking)
+        if (animator && !isAttacking &&!isRestricted)
         {
             animator.SetTrigger("Attack");
             isAttacking = true;
@@ -271,9 +272,26 @@ public class Guard : MonoBehaviour
         slowdownTimer = 0f;
     }
 
+    private void DeclareDead()
+    {
+        animator.SetBool("Dead", true);
+    }
 
-
-
+    public void TakeDamage()
+    {
+        health--;
+        if (health <= 0)
+        {
+            activeWeaponLayerIndex = 0;
+            animator.SetLayerWeight(activeWeaponLayerIndex, 0);
+            animator.SetTrigger("Die");
+          Invoke("DeclareDead", 0.1f);
+        }
+        else
+        {
+            animator.SetTrigger("TakeDamage");
+        }
+    }
 
 
 
