@@ -1,0 +1,12 @@
+My character has animations for jumping, double jumping, shielding, attacking, crouch attacking, crouching, sneaking, and weapon swapping to different poses. 
+The weapon on the ground can be picked up and used to attack.
+
+Two of the guards are set to "wake" mode, meaning they are laying down and stand up before pursuing the player, only once the player is close enough. The other guard is set to patrol mode.
+
+The guards can attack the player.
+
+The player can jump between structures.
+
+There are two available weapons to pick up, as well as the weaponless stance.
+
+The environment has flying birds that pass by at two points in the scene.

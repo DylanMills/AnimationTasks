@@ -88,8 +88,13 @@ public class ThirdPersonController : MonoBehaviour
 
     float horizontalMaster;
     float verticalMaster;
+
+
+    PlayerInventory inventory;
+
     private void Start()
     {
+        inventory = GetComponent<PlayerInventory>();
         controller = GetComponent<CharacterController>();
         if (!cameraTransform)
             cameraTransform = Camera.main.transform;
@@ -224,8 +229,8 @@ public class ThirdPersonController : MonoBehaviour
             WeaponSwitchInput(1);
         else if (Input.GetKeyDown(KeyCode.Alpha2))
             WeaponSwitchInput(2);
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-            WeaponSwitchInput(3);
+      //  else if (Input.GetKeyDown(KeyCode.Alpha3))
+       //     WeaponSwitchInput(3);
         else if (Input.GetKeyDown(KeyCode.Alpha4))
             WeaponSwitchInput(4);
     }
@@ -276,7 +281,7 @@ public class ThirdPersonController : MonoBehaviour
         }
     }
 
-    private void WeaponSwitchInput(int input)
+    public void WeaponSwitchInput(int input)
     {
         if (inactiveWeaponLayerIndex <= 0)
         {

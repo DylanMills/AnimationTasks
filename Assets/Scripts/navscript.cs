@@ -30,6 +30,11 @@ public class navscript : MonoBehaviour
         agent.speed = AgentSpeed;
         animator.SetFloat("Speed", AgentSpeed*animationSpeed);
         animator.SetFloat("AttackSpeed", (1.7f+(AgentSpeed/1.4f ))*animationSpeed);
+        animator.SetBool("isAwake", isAwake);
+        if (isAwake)
+        {
+            Invoke("StartMoving", 1.0f);
+        }
     }
     // Update is called once per frame
     void Update()
@@ -41,11 +46,13 @@ public class navscript : MonoBehaviour
             guard.isRestricted = true;
             return;
         }
-        if (isMoving)
-        agent.destination = theTarget.transform.position;
-        else
-            agent.destination = transform.position;
-
+        if (theTarget != null)
+        {
+            if (isMoving)
+                agent.destination = theTarget.transform.position;
+            else
+                agent.destination = transform.position;
+        
 
         distanceFromTarget = Vector3.Distance(theTarget.transform.position, transform.position);
         if(distanceFromTarget < 1.0f)
@@ -93,6 +100,7 @@ public class navscript : MonoBehaviour
             else
             {
                 guard.isRestricted = true;
+            }
             }
         }
     }

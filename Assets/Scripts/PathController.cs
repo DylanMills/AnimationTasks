@@ -15,6 +15,8 @@ public class PathController : MonoBehaviour
     public Animator animator;
     bool isWalking;
 
+    bool canTrigger = true;
+
     int i = -1;
 
     void Start()
@@ -60,7 +62,16 @@ public class PathController : MonoBehaviour
 
         transform.rotation = Quaternion.LookRotation(newDir);
     }
+    void DisableCollision()
+    {
+        bool canTrigger = false;
+        Invoke("EnableCollision", 2.0f);
 
+    }
+    void EnableCollision()
+    {
+        bool canTrigger = true;
+    }
     void MoveForward()
     {
         float stepSize = MoveSpeed * Time.deltaTime;
@@ -73,7 +84,9 @@ public class PathController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        DisableCollision();
         target = pathManager.GetNextTarget();
+        
     }
   
     private void OnCollisionEnter(Collision collision)
