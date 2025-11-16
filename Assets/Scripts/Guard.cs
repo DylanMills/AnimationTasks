@@ -15,7 +15,7 @@ public class Guard : MonoBehaviour
     public bool isBlocking = false;
 
     public bool isAttacking = false;
-    public float attackCooldown = 0.2f;
+    public float attackCooldown = 0.7f;
     public int health = 3;
 
     [Header("Attack Slowdown Settings")]
@@ -233,7 +233,10 @@ public class Guard : MonoBehaviour
             activeWeaponLayerIndex = 0;
             animator.SetLayerWeight(activeWeaponLayerIndex, 0);
             animator.SetTrigger("Die");
-          Invoke("DeclareDead", 0.1f);
+            animator.SetLayerWeight(swordLayerIndex, 0);
+            animator.SetLayerWeight(axeLayerIndex, 0);
+            animator.SetLayerWeight(bowLayerIndex, 0);
+            Invoke("DeclareDead", 0.1f);
         }
         else
         {

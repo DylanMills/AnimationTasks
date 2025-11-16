@@ -83,7 +83,7 @@ public class ThirdPersonController : MonoBehaviour
     public int inactiveWeaponLayerIndex = 0;
 
     private CharacterController controller;
-    private float gravity = -9.81f*2;
+    private float gravity = -9.81f * 2;
     private Vector3 velocity;
     private bool isCrouching = false;
     private float smoothTurnVelocity;
@@ -129,7 +129,7 @@ public class ThirdPersonController : MonoBehaviour
             if (activeWeaponLayerIndex != inactiveWeaponLayerIndex)
             { UnequipWeaponLayer(inactiveWeaponLayerIndex); }
         }
-    
+
 
 
         if (isSlowingDown)
@@ -141,7 +141,7 @@ public class ThirdPersonController : MonoBehaviour
             if (slowdownTimer >= slowdownDuration)
                 isSlowingDown = false;
         }
-        
+
         HandleMovement();
     }
 
@@ -224,9 +224,9 @@ public class ThirdPersonController : MonoBehaviour
                 animator.SetTrigger("Jump");
         }
         //if (Input.GetKeyDown(KeyCode.Alpha1))
-            //WeaponSwitchInput(1);
+        //WeaponSwitchInput(1);
         //else if (Input.GetKeyDown(KeyCode.Alpha2))
-            //WeaponSwitchInput(2);
+        //WeaponSwitchInput(2);
         //else if (Input.GetKeyDown(KeyCode.Alpha3))
         //            WeaponSwitchInput(3);
         //else if (Input.GetKeyDown(KeyCode.Alpha4))
@@ -331,7 +331,7 @@ public class ThirdPersonController : MonoBehaviour
         float newWeight = Mathf.MoveTowards(currentWeight, targetWeight, Time.deltaTime * weaponUnequipSpeed);
         animator.SetLayerWeight(weaponIndex, newWeight);
     }
-    
+
     private void HandleMovement()
     {
         float horizontal = Input.GetAxis("Horizontal");
@@ -347,16 +347,18 @@ public class ThirdPersonController : MonoBehaviour
         {
             float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
             float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref smoothTurnVelocity, 0.1f);
+            if (animator.GetBool("IsMoving") == false) { angle = targetAngle; } // Instant turn when starting to move
             transform.rotation = Quaternion.Euler(0f, angle, 0f);
 
             Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-           
-            float speed = isCrouching||isBlocking ? crouchSpeed : walkSpeed;
+
+            float speed = isCrouching || isBlocking ? crouchSpeed : walkSpeed;
             if (isAttacking)
             {
-                
+
                 controller.Move(movementMultiplier * moveDir * speed * Time.deltaTime);
-            }else
+            }
+            else
                 controller.Move(moveDir * speed * Time.deltaTime);
 
             animator.SetFloat("Moving", 1.0f);
@@ -369,10 +371,11 @@ public class ThirdPersonController : MonoBehaviour
             animator.SetBool("IsMoving", false);
         }
 
+        Debug.Log("moving: "+animator.GetBool("IsMoving"));
         // Gravity
-    
-      
-            velocity.y += gravity * Time.deltaTime;
+
+
+        velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
 

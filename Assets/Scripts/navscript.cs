@@ -53,7 +53,7 @@ public class navscript : MonoBehaviour
          if (distanceFromTarget < 8.0f&&!isKnockedback&&!isMoving)
         {
             animator.SetBool("isAwake", true);
-            Invoke("StartMoving", 3.0f);
+            Invoke("StartMoving", 2.0f);
         }
         if (distanceFromTarget > 4.0f && isAwake)
         {
@@ -71,13 +71,9 @@ public class navscript : MonoBehaviour
 
     }
     void Update()
-    {if(guard.health <= 0)
+    {if(guard.health <= 0&&isMoving)
         {
-            agent.isStopped = true;
-            isMoving = false;
-            animator.SetBool("isMoving", false);
-            guard.isRestricted = true;
-            return;
+        Invoke("Death", 0.05f);
         }
 
 
@@ -99,7 +95,7 @@ public class navscript : MonoBehaviour
 
             if (t >= 1f)
             {
-                //Debug.Log("Knockback ended: t="+t);
+                Debug.Log("Knockback ended: t="+t);
                 StartMoving();
                 isKnockedback = false;
             }
@@ -110,10 +106,23 @@ public class navscript : MonoBehaviour
             DetermineMovement();
         }
     }
+    void Death()
+    {
+        Debug.Log("Death called");
 
+        if (!isMoving)
+        {
+            return;
+        }
+        agent.isStopped = true;
+        isMoving = false;
+        animator.SetBool("isMoving", false);
+        guard.isRestricted = true;
+        return;
+    }
     void StartMoving()
     {
-        //Debug.Log("StartMoving called");
+        Debug.Log("StartMoving called");
         isMoving = true;
         animator.SetBool("isMoving", true);
         isKnockedback = false;
