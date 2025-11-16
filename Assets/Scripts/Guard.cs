@@ -88,13 +88,6 @@ public class Guard : MonoBehaviour
         //HandleMovement();
     }
 
-    //public void AttachHands(bool attach)
-    //{
-    //    rightHandIK.enabled = attach;
-
-    //    leftHandIK.enabled = attach;
-    //}
-
 
     private void TryAttack()
     {
@@ -182,51 +175,6 @@ public class Guard : MonoBehaviour
         animator.SetLayerWeight(weaponIndex, newWeight);
     }
 
-    private void HandleMovement()
-    {
-        return;
-        float horizontal = Input.GetAxis("Horizontal");
-        float vertical = Input.GetAxis("Vertical");
-        //if (isAttacking)
-        //{
-        //    horizontal = horizontalMaster;
-        //    vertical = verticalMaster;
-        //}
-        //Vector3 direction = new Vector3(horizontal, 0f, vertical).normalized;
-
-        //if (direction.magnitude >= 0.1f)
-        //{
-            //float targetAngle = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
-            //float angle = Mathf.SmoothDampAngle(transform.eulerAngles.y, targetAngle, ref smoothTurnVelocity, 0.1f);
-        //    transform.rotation = Quaternion.Euler(0f, angle, 0f);
-
-        //    Vector3 moveDir = Quaternion.Euler(0f, targetAngle, 0f) * Vector3.forward;
-
-        //    float speed = isCrouching || isBlocking ? crouchSpeed : walkSpeed;
-        //    if (isAttacking)
-        //    {
-
-        //        controller.Move(movementMultiplier * moveDir * speed * Time.deltaTime);
-        //    }
-        //    else
-        //        controller.Move(moveDir * speed * Time.deltaTime);
-
-        //    animator.SetFloat("Moving", 1.0f);
-        //    animator.SetBool("IsMoving", true);
-        //    animator.SetBool("IsCrouching", isCrouching);
-        //}
-        //else
-        //{
-        //    animator.SetFloat("Moving", 0.0f);
-        //    animator.SetBool("IsMoving", false);
-        //}
-
-        // Gravity
-
-
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
-    }
 
     private void HandleWeaponLayer(int weaponIndex)
     {
